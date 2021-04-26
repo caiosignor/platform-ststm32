@@ -147,6 +147,7 @@ def generate_hal_config_file():
 def build_custom_lib(lib_path, lib_manifest=None):
     if board.get("build.stm32cube.disable_embedded_libs", "no") == "yes":
         return
+    
     if lib_path:
         lib_manifest = lib_manifest or {"name": os.path.basename(lib_path)}
         env.Append(
@@ -154,6 +155,43 @@ def build_custom_lib(lib_path, lib_manifest=None):
                 PlatformIOLibBuilder(env, lib_path, lib_manifest.copy())
             ]
         )
+
+def build_cmsis_rtos2_libs(cmsis_rtos2_libs_root):
+    cmsis_rtos_v2_folder = os.path.join(cmsis_rtos2_libs_root, "CMSIS_RTOS_V2");
+    include_folder = os.path.join(cmsis_rtos2_libs_root, "Include");
+    portable_folder = os.path.join(cmsis_rtos2_libs_root, "portable", "GCC")
+
+    portable_folder_gcc = os.path.join(portable_folder, os.listdir(portable_folder)[0]);
+    portable_folder_memmang = os.path.join(portable_folder, "MemMang");
+
+    manifest = {
+        "build": {
+            "flags": ["-I $PROJECT_SRC_DIR", "-I $PROJECT_INCLUDE_DIR"],
+            "includeDir": ".",
+            "srcDir": ".",
+            "srcFilter": ["*.c"],
+        }
+    }
+
+    if os.path.isdir(include_folder):
+        print(include_folder)
+        build_custom_lib(include_folder)
+
+    if os.path.isdir(cmsis_rtos_v2_folder):
+        print(cmsis_rtos_v2_folder)
+        build_custom_lib(cmsis_rtos_v2_folder)
+    
+    if os.path.isdir(portable_folder_gcc):
+       print(portable_folder_gcc)
+       build_custom_lib(portable_folder_gcc)
+
+    if os.path.isdir(cmsis_rtos2_libs_root):
+        print(cmsis_rtos2_libs_root)
+        build_custom_lib(cmsis_rtos2_libs_root)
+
+    if os.path.isdir(portable_folder_memmang):
+        print(portable_folder_memmang)
+        build_custom_lib(portable_folder_memmang)
 
 
 def build_usb_libs(usb_libs_root):
@@ -206,13 +244,7 @@ env.Append(
         "$PROJECT_INCLUDE_DIR",
         os.path.join(FRAMEWORK_DIR, "Drivers", "CMSIS", "DSP", "Include"),
         os.path.join(FRAMEWORK_DIR, "Drivers", "CMSIS", "Include"),
-        os.path.join(
-            FRAMEWORK_DIR,
-            "Drivers",
-            "CMSIS",
-            "Device",
-            "ST",
-            MCU_FAMILY.upper() + "xx",
+        os.path.join(FRAMEWORK_DIR, "Drivers", "CMSIS", "Device", "ST", MCU_FAMILY.upper() + "xx",
             "Include",
         ),
         os.path.join(
@@ -295,6 +327,14 @@ for util in os.listdir(utils_dir):
 middleware_dir = os.path.join(FRAMEWORK_DIR, "Middlewares", "ST")
 for usb_lib in ("STM32_USB_Device_Library", "STM32_USB_Host_Library"):
     build_usb_libs(os.path.join(middleware_dir, usb_lib))
+
+#
+# CMSIS RTOS 2 librarries from st
+#
+
+# midddleware_rtos_dir = os.path.join(env["PROJECT_DIR"], "Middlewares", "Third_Party", "FreeRTOS", "Source");
+# if(os.path.isdir(midddleware_rtos_dir)):
+#     build_cmsis_rtos2_libs(midddleware_rtos_dir)
 
 #
 # Target: Build HAL Library
