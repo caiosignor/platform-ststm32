@@ -164,34 +164,26 @@ def build_cmsis_rtos2_libs(cmsis_rtos2_libs_root):
     portable_folder_gcc = os.path.join(portable_folder, os.listdir(portable_folder)[0]);
     portable_folder_memmang = os.path.join(portable_folder, "MemMang");
 
-    manifest = {
-        "build": {
-            "flags": ["-I $PROJECT_SRC_DIR", "-I $PROJECT_INCLUDE_DIR"],
-            "includeDir": ".",
-            "srcDir": ".",
-            "srcFilter": ["*.c"],
-        }
-    }
-
-    if os.path.isdir(include_folder):
-        print(include_folder)
-        build_custom_lib(include_folder)
-
-    if os.path.isdir(cmsis_rtos_v2_folder):
-        print(cmsis_rtos_v2_folder)
-        build_custom_lib(cmsis_rtos_v2_folder)
-    
     if os.path.isdir(portable_folder_gcc):
        print(portable_folder_gcc)
        build_custom_lib(portable_folder_gcc)
+
+    if os.path.isdir(portable_folder_memmang):
+        print(portable_folder_memmang)
+        build_custom_lib(portable_folder_memmang)
+        
+    if os.path.isdir(include_folder):
+        print(include_folder)
+        build_custom_lib(include_folder)
 
     if os.path.isdir(cmsis_rtos2_libs_root):
         print(cmsis_rtos2_libs_root)
         build_custom_lib(cmsis_rtos2_libs_root)
 
-    if os.path.isdir(portable_folder_memmang):
-        print(portable_folder_memmang)
-        build_custom_lib(portable_folder_memmang)
+    if os.path.isdir(cmsis_rtos_v2_folder):
+        print(cmsis_rtos_v2_folder)
+        build_custom_lib(cmsis_rtos_v2_folder)
+    
 
 
 def build_usb_libs(usb_libs_root):
@@ -332,9 +324,9 @@ for usb_lib in ("STM32_USB_Device_Library", "STM32_USB_Host_Library"):
 # CMSIS RTOS 2 librarries from st
 #
 
-# midddleware_rtos_dir = os.path.join(env["PROJECT_DIR"], "Middlewares", "Third_Party", "FreeRTOS", "Source");
-# if(os.path.isdir(midddleware_rtos_dir)):
-#     build_cmsis_rtos2_libs(midddleware_rtos_dir)
+middleware_rtos_dir = os.path.join(env["PROJECT_DIR"], "Middlewares", "Third_Party", "FreeRTOS", "Source");
+if(os.path.isdir(middleware_rtos_dir)):
+    build_cmsis_rtos2_libs(middleware_rtos_dir)
 
 #
 # Target: Build HAL Library
